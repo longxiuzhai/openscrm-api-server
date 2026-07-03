@@ -27,7 +27,7 @@ CREATE TABLE `customer` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户';
 
 DROP TABLE IF EXISTS `customer_info`;
 CREATE TABLE `customer_info` (
@@ -55,7 +55,7 @@ CREATE TABLE `customer_info` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='对客户编辑的用户画像，不同于企业微信员工对客户的备注和描述，后者记录在staff_customer中';
 
 DROP TABLE IF EXISTS `customer_info_display_rule`;
 CREATE TABLE `customer_info_display_rule` (
@@ -77,7 +77,7 @@ CREATE TABLE `customer_info_display_rule` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='是否显示信息';
 
 DROP TABLE IF EXISTS `customer_staff`;
 CREATE TABLE `customer_staff` (
@@ -110,7 +110,7 @@ CREATE TABLE `customer_staff` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户-员工关系 员工客户关系的历史数据（流水记录）也在此表中。 员工删除客户/客户删除员工时 新增一条数据，写入 customer_delete_staff_at/staff_delete_customer_at, 同时软删除原有记录。';
 
 DROP TABLE IF EXISTS `customer_staff_relation_history`;
 CREATE TABLE `customer_staff_relation_history` (
@@ -133,7 +133,7 @@ CREATE TABLE `customer_staff_relation_history` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='员工客户关系的历史数据（流水记录）。 员工删除客户/客户删除员工时 新增一条数据，写入 customer_delete_staff_at/staff_delete_customer_at, 同时软删除原有记录。';
 
 DROP TABLE IF EXISTS `staff`;
 CREATE TABLE `staff` (
@@ -174,7 +174,7 @@ CREATE TABLE `staff` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='员工';
 
 DROP TABLE IF EXISTS `department`;
 CREATE TABLE `department` (
@@ -195,7 +195,7 @@ CREATE TABLE `department` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='部门';
 
 DROP TABLE IF EXISTS `material_lib_tag`;
 CREATE TABLE `material_lib_tag` (
@@ -212,7 +212,7 @@ CREATE TABLE `material_lib_tag` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='素材库标签';
 
 DROP TABLE IF EXISTS `staff_department`;
 CREATE TABLE `staff_department` (
@@ -227,7 +227,7 @@ CREATE TABLE `staff_department` (
   UNIQUE KEY `idx_ext_corp_id_ext_staff_id` (`ext_corp_id`, `ext_staff_id`, `ext_department_id`),
   KEY `idx_ext_corp_id` (`ext_corp_id`),
   KEY `idx_ext_staff_id` (`ext_staff_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='员工部门关系';
 
 DROP TABLE IF EXISTS `customer_staff_tag`;
 CREATE TABLE `customer_staff_tag` (
@@ -249,7 +249,7 @@ CREATE TABLE `customer_staff_tag` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户员工标签关系';
 
 DROP TABLE IF EXISTS `group_chat_tag_group`;
 CREATE TABLE `group_chat_tag_group` (
@@ -261,7 +261,7 @@ CREATE TABLE `group_chat_tag_group` (
   UNIQUE KEY `name` (`name`),
   KEY `idx_ext_corp_id` (`ext_corp_id`),
   KEY `idx_ext_creator_id` (`ext_creator_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户群标签组';
 
 DROP TABLE IF EXISTS `corp_setting`;
 CREATE TABLE `corp_setting` (
@@ -278,7 +278,7 @@ CREATE TABLE `corp_setting` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='企业设置';
 
 DROP TABLE IF EXISTS `group_chat_tag`;
 CREATE TABLE `group_chat_tag` (
@@ -297,7 +297,7 @@ CREATE TABLE `group_chat_tag` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户群标签';
 
 DROP TABLE IF EXISTS `tag_group`;
 CREATE TABLE `tag_group` (
@@ -321,7 +321,7 @@ CREATE TABLE `tag_group` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='企微客户标签组';
 
 DROP TABLE IF EXISTS `tag`;
 CREATE TABLE `tag` (
@@ -348,7 +348,7 @@ CREATE TABLE `tag` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='企微客户标签';
 
 DROP TABLE IF EXISTS `chat_msg`;
 CREATE TABLE `chat_msg` (
@@ -370,7 +370,7 @@ CREATE TABLE `chat_msg` (
   UNIQUE KEY `uni_msg_id` (`msg_id`),
   KEY `idx_ext_corp_id` (`ext_corp_id`),
   KEY `idx_ext_creator_id` (`ext_creator_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会话存档消息';
 
 DROP TABLE IF EXISTS `chat_msg_content`;
 CREATE TABLE `chat_msg_content` (
@@ -391,7 +391,7 @@ CREATE TABLE `chat_msg_content` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会话存档消息内容';
 
 DROP TABLE IF EXISTS `quick_reply_group`;
 CREATE TABLE `quick_reply_group` (
@@ -412,7 +412,7 @@ CREATE TABLE `quick_reply_group` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='话术库分组';
 
 DROP TABLE IF EXISTS `quick_reply`;
 CREATE TABLE `quick_reply` (
@@ -437,7 +437,7 @@ CREATE TABLE `quick_reply` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='话术内容';
 
 DROP TABLE IF EXISTS `quick_reply_detail`;
 CREATE TABLE `quick_reply_detail` (
@@ -458,7 +458,7 @@ CREATE TABLE `quick_reply_detail` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='话术库每条记录内容';
 
 DROP TABLE IF EXISTS `customer_remark`;
 CREATE TABLE `customer_remark` (
@@ -479,7 +479,7 @@ CREATE TABLE `customer_remark` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='自定义信息';
 
 DROP TABLE IF EXISTS `remark_option`;
 CREATE TABLE `remark_option` (
@@ -494,7 +494,7 @@ CREATE TABLE `remark_option` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='对于多选类型信息的选项';
 
 DROP TABLE IF EXISTS `customer_event`;
 CREATE TABLE `customer_event` (
@@ -520,7 +520,7 @@ CREATE TABLE `customer_event` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='事件类型';
 
 DROP TABLE IF EXISTS `internal_tag`;
 CREATE TABLE `internal_tag` (
@@ -539,7 +539,7 @@ CREATE TABLE `internal_tag` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='内部客户标签';
 
 DROP TABLE IF EXISTS `material`;
 CREATE TABLE `material` (
@@ -564,7 +564,7 @@ CREATE TABLE `material` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='素材';
 
 DROP TABLE IF EXISTS `remainder`;
 CREATE TABLE `remainder` (
@@ -582,7 +582,7 @@ CREATE TABLE `remainder` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户提醒';
 
 DROP TABLE IF EXISTS `mass_msg`;
 CREATE TABLE `mass_msg` (
@@ -612,7 +612,7 @@ CREATE TABLE `mass_msg` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='企业群发消息内容 消息内容不可修改';
 
 DROP TABLE IF EXISTS `mass_msg_staff`;
 CREATE TABLE `mass_msg_staff` (
@@ -636,7 +636,7 @@ CREATE TABLE `mass_msg_staff` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户群发员工执行记录';
 
 DROP TABLE IF EXISTS `welcome_msg`;
 CREATE TABLE `welcome_msg` (
@@ -659,7 +659,7 @@ CREATE TABLE `welcome_msg` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='主欢迎语-多个分时欢迎语 主欢迎语维护可用员工和部门id列表';
 
 DROP TABLE IF EXISTS `event_notify`;
 CREATE TABLE `event_notify` (
@@ -678,7 +678,7 @@ CREATE TABLE `event_notify` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='删人提醒事件通知设置';
 
 DROP TABLE IF EXISTS `group_chat`;
 CREATE TABLE `group_chat` (
@@ -710,7 +710,7 @@ CREATE TABLE `group_chat` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户群';
 
 DROP TABLE IF EXISTS `group_chat_member`;
 CREATE TABLE `group_chat_member` (
@@ -729,7 +729,7 @@ CREATE TABLE `group_chat_member` (
   KEY `idx_ext_corp_id` (`ext_corp_id`),
   KEY `idx_ext_creator_id` (`ext_creator_id`),
   KEY `idx_ext_chat_id` (`ext_chat_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户群成员';
 
 DROP TABLE IF EXISTS `group_chat_group`;
 CREATE TABLE `group_chat_group` (
@@ -747,7 +747,7 @@ CREATE TABLE `group_chat_group` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户群分组';
 
 DROP TABLE IF EXISTS `group_chat_auto_join_code`;
 CREATE TABLE `group_chat_auto_join_code` (
@@ -781,7 +781,7 @@ CREATE TABLE `group_chat_auto_join_code` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='自动拉群码';
 
 DROP TABLE IF EXISTS `group_chat_qrcode`;
 CREATE TABLE `group_chat_qrcode` (
@@ -791,7 +791,7 @@ CREATE TABLE `group_chat_qrcode` (
   `qr_url` text COMMENT '群二维码的pic url',
   `user_limit` int unsigned COMMENT '群二维码添加好友数上限',
   `status` tinyint unsigned COMMENT '群二维码状态,1- 使用中 2-已停用'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='自动拉群码中的群二维码';
 
 DROP TABLE IF EXISTS `group_chat_auto_join_code_staff`;
 CREATE TABLE `group_chat_auto_join_code_staff` (
@@ -817,7 +817,7 @@ CREATE TABLE `group_chat_auto_join_code_staff` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='自动拉群码绑定的员工';
 
 DROP TABLE IF EXISTS `group_chat_welcome_msg`;
 CREATE TABLE `group_chat_welcome_msg` (
@@ -836,7 +836,7 @@ CREATE TABLE `group_chat_welcome_msg` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='入群欢迎语';
 
 DROP TABLE IF EXISTS `group_chat_mass_msg`;
 CREATE TABLE `group_chat_mass_msg` (
@@ -863,7 +863,7 @@ CREATE TABLE `group_chat_mass_msg` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='客户群群发消息内容 消息内容不可修改';
 
 DROP TABLE IF EXISTS `customer_statistic`;
 CREATE TABLE `customer_statistic` (
@@ -885,7 +885,7 @@ CREATE TABLE `customer_statistic` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='按天统计客户数量 unique_index: ext_staff_id - date';
 
 DROP TABLE IF EXISTS `data_export`;
 CREATE TABLE `data_export` (
@@ -905,7 +905,7 @@ CREATE TABLE `data_export` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='数据导出任务';
 
 DROP TABLE IF EXISTS `contact_way_group`;
 CREATE TABLE `contact_way_group` (
@@ -927,7 +927,7 @@ CREATE TABLE `contact_way_group` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='渠道码分组';
 
 DROP TABLE IF EXISTS `contact_way`;
 CREATE TABLE `contact_way` (
@@ -974,7 +974,7 @@ CREATE TABLE `contact_way` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='渠道码';
 
 DROP TABLE IF EXISTS `contact_way_schedule`;
 CREATE TABLE `contact_way_schedule` (
@@ -996,7 +996,7 @@ CREATE TABLE `contact_way_schedule` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='渠道码调度设置（根据时间自动上下线员工）';
 
 DROP TABLE IF EXISTS `contact_way_schedule_staff`;
 CREATE TABLE `contact_way_schedule_staff` (
@@ -1024,7 +1024,7 @@ CREATE TABLE `contact_way_schedule_staff` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='渠道码绑定的员工';
 
 DROP TABLE IF EXISTS `contact_way_backup_staff`;
 CREATE TABLE `contact_way_backup_staff` (
@@ -1050,7 +1050,7 @@ CREATE TABLE `contact_way_backup_staff` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='渠道码绑定的备份员工';
 
 DROP TABLE IF EXISTS `contact_way_staff`;
 CREATE TABLE `contact_way_staff` (
@@ -1076,7 +1076,7 @@ CREATE TABLE `contact_way_staff` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='渠道码绑定的员工';
 
 DROP TABLE IF EXISTS `permission`;
 CREATE TABLE `permission` (
@@ -1099,7 +1099,7 @@ CREATE TABLE `permission` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='权限';
 
 DROP TABLE IF EXISTS `role`;
 CREATE TABLE `role` (
@@ -1124,4 +1124,4 @@ CREATE TABLE `role` (
   KEY `idx_created_at` (`created_at`),
   KEY `idx_updated_at` (`updated_at`),
   KEY `idx_deleted_at` (`deleted_at`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='角色';

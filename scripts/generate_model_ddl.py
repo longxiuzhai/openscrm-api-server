@@ -7,6 +7,57 @@ ROOT = Path(__file__).resolve().parents[1]
 MODELS = ROOT / "app" / "models"
 OUT = ROOT / "docs" / "schema.sql"
 
+TABLE_COMMENT_FALLBACKS = {
+    "Customer": "客户",
+    "CustomerInfo": "客户扩展信息",
+    "CustomerInfoDisplayRule": "客户信息展示规则",
+    "CustomerStaff": "客户与员工关系",
+    "CustomerStaffRelationHistory": "客户员工关系历史",
+    "Staff": "员工",
+    "Department": "部门",
+    "MaterialLibTag": "素材库标签",
+    "StaffDepartment": "员工部门关系",
+    "CustomerStaffTag": "客户员工标签关系",
+    "GroupChatTagGroup": "客户群标签组",
+    "CorpSetting": "企业设置",
+    "GroupChatTag": "客户群标签",
+    "TagGroup": "企微客户标签组",
+    "Tag": "企微客户标签",
+    "ChatMsg": "会话存档消息",
+    "ChatMsgContent": "会话存档消息内容",
+    "QuickReplyGroup": "快捷回复分组",
+    "QuickReply": "快捷回复",
+    "QuickReplyDetail": "快捷回复详情",
+    "CustomerRemark": "客户自定义字段",
+    "RemarkOption": "客户自定义字段选项",
+    "CustomerEvent": "客户事件",
+    "InternalTag": "内部客户标签",
+    "Material": "素材",
+    "Remainder": "客户提醒",
+    "MassMsg": "客户群发任务",
+    "MassMsgStaff": "客户群发员工执行记录",
+    "WelcomeMsg": "欢迎语",
+    "EventNotify": "事件通知设置",
+    "GroupChat": "客户群",
+    "GroupChatMember": "客户群成员",
+    "GroupChatGroup": "客户群分组",
+    "GroupChatAutoJoinCode": "自动拉群码",
+    "GroupChatQRCode": "自动拉群码群二维码",
+    "GroupChatAutoJoinCodeStaff": "自动拉群码员工关系",
+    "GroupChatWelcomeMsg": "客户群欢迎语",
+    "GroupChatMassMsg": "客户群群发任务",
+    "CustomerStatistic": "客户统计",
+    "DataExport": "数据导出任务",
+    "ContactWayGroup": "渠道码分组",
+    "ContactWay": "渠道码",
+    "ContactWaySchedule": "渠道码工作日调度",
+    "ContactWayScheduleStaff": "渠道码调度员工关系",
+    "ContactWayBackupStaff": "渠道码备份员工关系",
+    "ContactWayStaff": "渠道码员工关系",
+    "Permission": "权限",
+    "Role": "角色",
+}
+
 ACRONYMS = {
     "API", "ASCII", "CPU", "CSS", "DNS", "EOF", "GUID", "HTML", "HTTP",
     "HTTPS", "ID", "IP", "JSON", "LHS", "QPS", "RAM", "RHS", "RPC", "SLA",
@@ -149,7 +200,25 @@ def extract_structs():
                     depth -= 1
                 i += 1
             body = text[start : i - 1]
-            structs[name] = (path, body)
+            comment = ""
+            prefix = text[: m.start()].splitlines()
+            comment_lines = []
+            for line in reversed(prefix):
+                stripped = line.strip()
+                if stripped.startswith("//"):
+                    value = stripped[2:].strip()
+                    if value.startswith(name):
+                        value = value[len(name) :].strip()
+                    comment_lines.append(value)
+                    continue
+                if stripped == "":
+                    if comment_lines:
+                        break
+                    continue
+                break
+            if comment_lines:
+                comment = " ".join(reversed(comment_lines)).strip()
+            structs[name] = (path, body, comment)
     return structs
 
 
@@ -185,7 +254,7 @@ def raw_fields(struct_name, structs, stack=None):
         return []
     if struct_name in stack:
         return []
-    _, body = structs[struct_name]
+    _, body, _ = structs[struct_name]
     rows = []
     for line in body.splitlines():
         line = line.strip()
@@ -309,6 +378,7 @@ def main():
     for struct in migrate:
         cols = collect_columns(struct, structs)
         tname = table_name(struct, explicit)
+        table_comment = (structs[struct][2] or TABLE_COMMENT_FALLBACKS.get(struct, "")).replace("'", "''")
         covered.append((struct, tname, len(cols)))
         if not cols:
             statements.append(f"-- WARNING: {struct} produced no columns.")
@@ -316,7 +386,10 @@ def main():
         lines = [c["line"] for c in cols] + index_defs(cols)
         body = ",\n  ".join(lines)
         statements.append(f"DROP TABLE IF EXISTS `{tname}`;")
-        statements.append(f"CREATE TABLE `{tname}` (\n  {body}\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;")
+        suffix = "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+        if table_comment:
+            suffix += f" COMMENT='{table_comment}'"
+        statements.append(f"CREATE TABLE `{tname}` (\n  {body}\n) {suffix};")
         statements.append("")
 
     OUT.write_text("\n".join(statements))
