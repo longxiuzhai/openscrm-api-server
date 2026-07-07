@@ -1,0 +1,80 @@
+server:
+  port: 9001
+
+spring:
+  application:
+    name: openscrm-api-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/open_scrm_demo?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: open_scrm_demo
+    password: A6UBxB4igUNxPRfx3CpYutH353VYo8Atpc
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: A6UBxB4igUNxPRfx3CpYutH353VYo8Atpc
+      database: 0
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: A6UBxB4igUNxPRfx3CpYutH353VYo8Atpc
+    database: 0
+  rabbitmq:
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  session:
+    store-type: redis
+    timeout: 7d
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    baseline-version: 0
+    validate-on-migrate: true
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-handlers-package: cn.openscrm.api.persistence.typehandler
+  global-config:
+    db-config:
+      id-type: input
+      logic-delete-field: deletedAt
+      logic-not-delete-value: 'null'
+      logic-delete-value: now()
+  configuration:
+    map-underscore-to-camel-case: true
+
+openscrm:
+  env: DEV
+  seed:
+    enabled: false
+  jwt:
+    # Replace this value before production. It must be a Base64 encoded secret.
+    secret: QXpia2Rra0FWNm93MTdKY3drN1orck9xOE13T0dtN2xWNVdYamFsb3crK1JMUApBTDIyK3ZFZkpiRVduRHU0RHZndTZFZThudDRscXNRbGxoZzEzQmc9PQ==
+    ttl-seconds: 604800
+  storage:
+    type: ${OPENSCRM_STORAGE_TYPE:oss}
+    local-root: ${OPENSCRM_STORAGE_LOCAL_ROOT:/tmp/openscrm-api-server/uploads}
+    signed-url-ttl-seconds: ${OPENSCRM_STORAGE_SIGNED_URL_TTL_SECONDS:3600}
+    endpoint: ${ALIYUN_OSS_ENDPOINT:}
+    bucket: ${ALIYUN_OSS_BUCKET:}
+    access-key-id: ${ALIYUN_OSS_ACCESS_KEY_ID:}
+    access-key-secret: ${ALIYUN_OSS_ACCESS_KEY_SECRET:}
+    cdn-url: ${ALIYUN_OSS_CDN_URL:}
+  msg-arch:
+    # Optional external msg-archive service, for example http://msg-archive-server:8080.
+    server-url: ${OPENSCRM_MSG_ARCH_SERVER_URL:}
+    # Must match the msg-archive service inner-srv app code for HMAC signing.
+    app-code: ${OPENSCRM_MSG_ARCH_APP_CODE:}
+  we-work:
+    api-host: https://qyapi.weixin.qq.com
+    ext-corp-id: ww2d3e2957190c6e4c
+    contact-secret:
+    customer-secret:
+    main-agent-id: 10004
+    main-agent-secret:
+    callback-token:
+    callback-aes-key:
