@@ -7,7 +7,9 @@ import cn.openscrm.api.common.api.PageResponse;
 import cn.openscrm.api.common.constant.BizIdentity;
 import cn.openscrm.api.common.constant.OperationType;
 import cn.openscrm.api.persistence.entity.StaffPo;
+import cn.openscrm.api.staff.dto.CurrentStaffResponse;
 import cn.openscrm.api.staff.dto.EnableStaffsRequest;
+import cn.openscrm.api.staff.dto.SimpleStaffResponse;
 import cn.openscrm.api.staff.service.StaffService;
 import javax.servlet.http.HttpSession;
 import javax.validation.constraints.Max;
@@ -77,7 +79,20 @@ public class StaffController {
     }
 
     @GetMapping("/action/get-current-staff")
-    public ApiResponse<StaffPo> current(HttpSession session) {
-        return ApiResponse.ok(currentStaffService.requireStaffAdmin(session));
+    public ApiResponse<CurrentStaffResponse> current(HttpSession session) {
+        return ApiResponse.ok(staffService.getCurrent(currentStaffService.requireStaffAdmin(session)));
+    }
+
+    @GetMapping("/staff/action/get-all")
+    @RequirePermission(biz = BizIdentity.BIZ_STAFF_INFO, operation = OperationType.READ)
+    public ApiResponse<PageResponse<SimpleStaffResponse>> getAll(
+            @RequestParam(value = "ext_staff_id", required = false) String extStaffId,
+            @RequestParam(value = "ext_department_id", required = false) Integer extDepartmentId,
+            @RequestParam(defaultValue = "1") @Min(1) long page,
+            @RequestParam(value = "page_size", defaultValue = "20") @Min(1) @Max(5000) long pageSize,
+            HttpSession session) {
+        StaffPo current = currentStaffService.requireStaffAdmin(session);
+        return ApiResponse.ok(staffService.queryMainInfo(
+                current.getExtCorpId(), extStaffId, extDepartmentId, page, pageSize));
     }
 }

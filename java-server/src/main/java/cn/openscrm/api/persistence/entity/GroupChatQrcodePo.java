@@ -20,7 +20,7 @@ public class GroupChatQrcodePo {
     private Long groupChatAutoJoinId;
 
 
-    @TableField("order")
+    @TableField("`order`")
     private Integer order;
 
 

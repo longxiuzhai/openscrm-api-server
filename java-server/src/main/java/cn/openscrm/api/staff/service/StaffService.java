@@ -7,12 +7,16 @@ import cn.openscrm.api.common.constant.SeedIds;
 import cn.openscrm.api.common.id.SnowflakeIdGenerator;
 import cn.openscrm.api.config.OpenScrmProperties;
 import cn.openscrm.api.persistence.entity.DepartmentPo;
+import cn.openscrm.api.persistence.entity.RolePo;
 import cn.openscrm.api.persistence.entity.StaffDepartmentPo;
 import cn.openscrm.api.persistence.entity.StaffPo;
 import cn.openscrm.api.persistence.mapper.DepartmentPoMapper;
+import cn.openscrm.api.persistence.mapper.RolePoMapper;
 import cn.openscrm.api.persistence.mapper.StaffDepartmentPoMapper;
 import cn.openscrm.api.persistence.mapper.StaffPoMapper;
+import cn.openscrm.api.staff.dto.CurrentStaffResponse;
 import cn.openscrm.api.staff.dto.EnableStaffsRequest;
+import cn.openscrm.api.staff.dto.SimpleStaffResponse;
 import cn.openscrm.api.wework.UserDetailResponse;
 import cn.openscrm.api.wework.UserIdInfo;
 import cn.openscrm.api.wework.UserIdListResponse;
@@ -22,9 +26,14 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -38,6 +47,7 @@ public class StaffService {
     private final StaffPoMapper staffMapper;
     private final StaffDepartmentPoMapper staffDepartmentMapper;
     private final DepartmentPoMapper departmentMapper;
+    private final RolePoMapper roleMapper;
     private final WeWorkClient weWorkClient;
     private final OpenScrmProperties properties;
     private final SnowflakeIdGenerator idGenerator;
@@ -46,6 +56,7 @@ public class StaffService {
     public StaffService(StaffPoMapper staffMapper,
                         StaffDepartmentPoMapper staffDepartmentMapper,
                         DepartmentPoMapper departmentMapper,
+                        RolePoMapper roleMapper,
                         WeWorkClient weWorkClient,
                         OpenScrmProperties properties,
                         SnowflakeIdGenerator idGenerator,
@@ -53,6 +64,7 @@ public class StaffService {
         this.staffMapper = staffMapper;
         this.staffDepartmentMapper = staffDepartmentMapper;
         this.departmentMapper = departmentMapper;
+        this.roleMapper = roleMapper;
         this.weWorkClient = weWorkClient;
         this.properties = properties;
         this.idGenerator = idGenerator;
@@ -115,6 +127,92 @@ public class StaffService {
                 .eq(StaffPo::getExtCorpId, extCorpId)
                 .eq(StaffPo::getExtId, extStaffId)
                 .last("limit 1"));
+    }
+
+    public CurrentStaffResponse getCurrent(StaffPo staff) {
+        RolePo role = staff.getRoleId() == null ? null : roleMapper.selectById(staff.getRoleId());
+        if (role != null && !staff.getExtCorpId().equals(role.getExtCorpId())) {
+            role = null;
+        }
+        return CurrentStaffResponse.from(staff, role,
+                role == null ? Collections.emptyList() : parseStringList(role.getPermissionIds()));
+    }
+
+    public PageResponse<SimpleStaffResponse> queryMainInfo(String extCorpId,
+                                                           String extStaffId,
+                                                           Integer extDepartmentId,
+                                                           long page,
+                                                           long pageSize) {
+        List<Long> matchingStaffIds = null;
+        if (extDepartmentId != null && extDepartmentId > 0) {
+            matchingStaffIds = staffDepartmentMapper.selectList(new LambdaQueryWrapper<StaffDepartmentPo>()
+                            .eq(StaffDepartmentPo::getExtCorpId, extCorpId)
+                            .eq(StaffDepartmentPo::getExtDepartmentId, extDepartmentId))
+                    .stream()
+                    .map(StaffDepartmentPo::getStaffId)
+                    .filter(java.util.Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+            if (matchingStaffIds.isEmpty()) {
+                return new PageResponse<>(Collections.emptyList(), 0, page, pageSize);
+            }
+        }
+
+        LambdaQueryWrapper<StaffPo> wrapper = new LambdaQueryWrapper<StaffPo>()
+                .eq(StaffPo::getExtCorpId, extCorpId)
+                .eq(StringUtils.hasText(extStaffId), StaffPo::getExtId, extStaffId)
+                .in(matchingStaffIds != null, StaffPo::getId, matchingStaffIds)
+                .orderByDesc(StaffPo::getCreatedAt);
+        IPage<StaffPo> result = staffMapper.selectPage(Page.of(page, pageSize), wrapper);
+        List<Long> staffIds = result.getRecords().stream()
+                .map(StaffPo::getId)
+                .filter(java.util.Objects::nonNull)
+                .collect(Collectors.toList());
+        Map<Long, List<DepartmentPo>> departmentsByStaff = loadDepartments(staffIds);
+        List<SimpleStaffResponse> items = result.getRecords().stream()
+                .map(staff -> SimpleStaffResponse.from(staff,
+                        departmentsByStaff.getOrDefault(staff.getId(), Collections.emptyList())))
+                .collect(Collectors.toList());
+        return new PageResponse<>(items, result.getTotal(), page, pageSize);
+    }
+
+    private Map<Long, List<DepartmentPo>> loadDepartments(List<Long> staffIds) {
+        if (staffIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        List<StaffDepartmentPo> relations = staffDepartmentMapper.selectList(
+                new LambdaQueryWrapper<StaffDepartmentPo>().in(StaffDepartmentPo::getStaffId, staffIds));
+        List<Long> departmentIds = relations.stream()
+                .map(StaffDepartmentPo::getDepartmentId)
+                .filter(java.util.Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+        if (departmentIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+        Map<Long, DepartmentPo> departmentById = departmentMapper.selectBatchIds(departmentIds).stream()
+                .collect(Collectors.toMap(DepartmentPo::getId, item -> item, (left, right) -> left,
+                        LinkedHashMap::new));
+        Map<Long, List<DepartmentPo>> result = new HashMap<>();
+        for (StaffDepartmentPo relation : relations) {
+            DepartmentPo department = departmentById.get(relation.getDepartmentId());
+            if (relation.getStaffId() != null && department != null) {
+                result.computeIfAbsent(relation.getStaffId(), ignored -> new ArrayList<>()).add(department);
+            }
+        }
+        return result;
+    }
+
+    private List<String> parseStringList(String json) {
+        if (!StringUtils.hasText(json)) {
+            return Collections.emptyList();
+        }
+        try {
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException("invalid role permission ids", e);
+        }
     }
 
     public void enable(String extCorpId, EnableStaffsRequest request) {

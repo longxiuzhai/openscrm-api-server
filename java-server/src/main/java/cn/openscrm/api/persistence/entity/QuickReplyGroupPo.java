@@ -64,7 +64,7 @@ public class QuickReplyGroupPo {
     private Integer isTopGroup;
 
 
-    @TableField("order")
+    @TableField("`order`")
     private Integer order;
 
 

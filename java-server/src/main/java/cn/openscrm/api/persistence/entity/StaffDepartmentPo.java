@@ -43,7 +43,7 @@ public class StaffDepartmentPo {
     /**
      * 所在部门的排序
      */
-    @TableField("order")
+    @TableField("`order`")
     private Integer order;
 
 }

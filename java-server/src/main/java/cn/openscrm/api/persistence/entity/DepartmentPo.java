@@ -53,7 +53,7 @@ public class DepartmentPo {
     /**
      * 在父部门中的次序值
      */
-    @TableField("order")
+    @TableField("`order`")
     private Integer order;
 
 
