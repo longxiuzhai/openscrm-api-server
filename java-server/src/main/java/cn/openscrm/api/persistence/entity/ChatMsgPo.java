@@ -45,14 +45,14 @@ public class ChatMsgPo {
     /**
      * 消息动作，目前有send(发送消息)/recall(撤回消息)/switch(切换企业日志)三种类型
      */
-    @TableField("action")
+    @TableField("`action`")
     private String action;
 
 
     /**
      * 消息发送方id。同一企业内容为userid，非相同企业为external_userid。消息如果是机器人发出，也为external_userid
      */
-    @TableField("from")
+    @TableField("`from`")
     private String from;
 
 
